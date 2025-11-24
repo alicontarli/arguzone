@@ -1,16 +1,70 @@
-# React + Vite
+# ArguZone (Beta v0.0.1)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Status](https://img.shields.io/badge/Status-Beta-orange) ![Version](https://img.shields.io/badge/Version-v0.0.1-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
-Currently, two official plugins are available:
+**ArguZone**, arkadaş grupları için tasarlanmış, düşük gecikmeli sesli ve yazılı iletişim sağlayan modern bir sohbet uygulamasıdır. Web teknolojilerinin gücünü Electron ile masaüstüne taşıyarak Discord benzeri bir deneyim sunmayı hedefler.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Özellikler
 
-## React Compiler
+* **Gerçek Zamanlı Mesajlaşma:** Firebase Firestore altyapısı ile anlık yazılı iletişim.
+* **P2P Sesli Sohbet:** PeerJS kullanılarak sunucu maliyeti olmadan, kullanıcılar arasında doğrudan ve düşük gecikmeli ses aktarımı.
+* **Masaüstü Entegrasyonu:**
+    * Electron ile Windows üzerinde native uygulama deneyimi.
+    * **Global Mute (Susturma):** Uygulama arka planda olsa bile `Alt + M` kısayolu ile mikrofonu açıp kapatabilme.
+* **Çapraz Platform:** Hem web tarayıcısında hem de masaüstü uygulaması olarak çalışabilir yapı.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Teknoloji Yığını (Tech Stack)
 
-## Expanding the ESLint configuration
+Bu proje aşağıdaki teknolojiler kullanılarak geliştirilmiştir:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **Core:** [React](https://react.dev/) + [Vite](https://vitejs.dev/)
+* **Desktop Framework:** [Electron](https://www.electronjs.org/)
+* **Backend & Database:** [Firebase](https://firebase.google.com/) (Auth & Firestore)
+* **Voice / P2P:** [PeerJS](https://peerjs.com/) (WebRTC Wrapper)
+* **Build Tool:** Electron Builder
+
+## ⚙️ Kurulum ve Çalıştırma
+
+Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
+
+### 1. Depoyu Klonlayın
+```bash
+git clone [https://github.com/KULLANICI_ADINIZ/arguzone-beta.git](https://github.com/KULLANICI_ADINIZ/arguzone-beta.git)
+cd arguzone-beta
+```
+2. Bağımlılıkları Yükleyin
+Bash
+
+npm install
+3. Çevresel Değişkenler (.env)
+Projenin çalışması için Firebase ve PeerJS yapılandırmalarını içeren bir .env dosyasına ihtiyacınız vardır. Ana dizinde .env dosyası oluşturun ve aşağıdaki anahtarları kendi Firebase projenizden alarak doldurun:
+
+Kod snippet'i
+
+VITE_API_KEY=your_firebase_api_key
+VITE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_PROJECT_ID=your_project_id
+VITE_STORAGE_BUCKET=your_project.appspot.com
+VITE_MESSAGING_SENDER_ID=your_sender_id
+VITE_APP_ID=your_app_id
+4. Geliştirme Modunda Çalıştırma (Dev)
+Web ve Electron'u aynı anda geliştirme modunda açmak için:
+
+```Bash
+
+npm run electron:dev
+```
+Sadece Web sürümü için:
+```Bash
+npm run dev
+```
+
+📦 Build (Derleme)
+Windows için .exe dosyası oluşturmak istiyorsanız:
+```Bash
+npm run electron:build
+```
+Çıktı dosyaları release/ klasöründe oluşturulacaktır.
+
+🤝 Katkı
+Bu proje şu anda geliştirme aşamasındadır. Hataları "Issues" sekmesinden bildirebilirsiniz.
