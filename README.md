@@ -40,13 +40,14 @@ npm install
 Projenin çalışması için Firebase ve PeerJS yapılandırmalarını içeren bir .env dosyasına ihtiyacınız vardır. Ana dizinde .env dosyası oluşturun ve aşağıdaki anahtarları kendi Firebase projenizden alarak doldurun:
 
 Kod snippet'i
-
+```Bash
 VITE_API_KEY=your_firebase_api_key
 VITE_AUTH_DOMAIN=your_project.firebaseapp.com
 VITE_PROJECT_ID=your_project_id
 VITE_STORAGE_BUCKET=your_project.appspot.com
 VITE_MESSAGING_SENDER_ID=your_sender_id
 VITE_APP_ID=your_app_id
+```
 ### 4. Geliştirme Modunda Çalıştırma (Dev)
 Web ve Electron'u aynı anda geliştirme modunda açmak için:
 ```Bash
