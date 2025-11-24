@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #36393f; /* Discord Ana Gri */
+  color: #dcddde;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar Tasarımı (İnce ve koyu) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #2f3136; 
+}
+::-webkit-scrollbar-thumb {
+  background: #202225; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #040405; 
+}
+
+button {
+  transition: all 0.2s ease;
+}
+button:hover {
+  filter: brightness(110%);
+  transform: translateY(-1px);
+}
+button:active {
+  transform: translateY(1px);
+}
+
+input:focus {
+  outline: none;
+  border-color: #7289da !important;
+}
+
+/* Chat Baloncukları için animasyon */
+.mesaj-kutusu {
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
