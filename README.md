@@ -2,20 +2,20 @@
 
 ![Status](https://img.shields.io/badge/Status-Beta-orange) ![Version](https://img.shields.io/badge/Version-v0.0.1-blue) ![License](https://img.shields.io/badge/License-MIT-green)
 
-**ArguZone**, arkadaş grupları için tasarlanmış, düşük gecikmeli sesli ve yazılı iletişim sağlayan modern bir sohbet uygulamasıdır. Web teknolojilerinin gücünü Electron ile masaüstüne taşıyarak Discord benzeri bir deneyim sunmayı hedefler.
+**ArguZone** is a modern chat application designed for friend groups, providing low-latency voice and text communication. It aims to offer a Discord-like experience by bringing the power of web technologies to the desktop with Electron.
 
-## 🚀 Özellikler
+## 🚀 Features
 
-* **Gerçek Zamanlı Mesajlaşma:** Firebase Firestore altyapısı ile anlık yazılı iletişim.
-* **P2P Sesli Sohbet:** PeerJS kullanılarak sunucu maliyeti olmadan, kullanıcılar arasında doğrudan ve düşük gecikmeli ses aktarımı.
-* **Masaüstü Entegrasyonu:**
-    * Electron ile Windows üzerinde native uygulama deneyimi.
-    * **Global Mute (Susturma):** Uygulama arka planda olsa bile `Alt + M` kısayolu ile mikrofonu açıp kapatabilme.
-* **Çapraz Platform:** Hem web tarayıcısında hem de masaüstü uygulaması olarak çalışabilir yapı.
+* **Real-Time Messaging:** Instant text communication via Firebase Firestore infrastructure.
+* **P2P Voice Chat:** Direct and low-latency voice transmission between users using PeerJS without server costs.
+* **Desktop Integration:**
+    * Native application experience on Windows with Electron.
+    * **Global Mute:** Ability to toggle the microphone with the `Alt + M` shortcut even when the application is in the background.
+* **Cross-Platform:** A structure that can work both in the web browser and as a desktop application.
 
-## 🛠️ Teknoloji Yığını (Tech Stack)
+## 🛠️ Tech Stack
 
-Bu proje aşağıdaki teknolojiler kullanılarak geliştirilmiştir:
+This project is developed using the following technologies:
 
 * **Core:** [React](https://react.dev/) + [Vite](https://vitejs.dev/)
 * **Desktop Framework:** [Electron](https://www.electronjs.org/)
@@ -23,23 +23,21 @@ Bu proje aşağıdaki teknolojiler kullanılarak geliştirilmiştir:
 * **Voice / P2P:** [PeerJS](https://peerjs.com/) (WebRTC Wrapper)
 * **Build Tool:** Electron Builder
 
-## ⚙️ Kurulum ve Çalıştırma
+## ⚙️ Installation and Setup
 
-Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
+Follow the steps below to run the project in your local environment:
 
-### 1. Depoyu Klonlayın
+### 1. Clone the Repository
 ```bash
-git clone [https://github.com/KULLANICI_ADINIZ/arguzone-beta.git](https://github.com/KULLANICI_ADINIZ/arguzone-beta.git)
+git clone [https://github.com/YOUR_USERNAME/arguzone-beta.git](https://github.com/YOUR_USERNAME/arguzone-beta.git)
 cd arguzone-beta
 ```
-### 2. Bağımlılıkları Yükleyin
+### 2. Install Dependencies
 ```Bash
 npm install
 ```
-### 3. Çevresel Değişkenler (.env)
-Projenin çalışması için Firebase ve PeerJS yapılandırmalarını içeren bir .env dosyasına ihtiyacınız vardır. Ana dizinde .env dosyası oluşturun ve aşağıdaki anahtarları kendi Firebase projenizden alarak doldurun:
-
-Kod snippet'i
+### 3. Environment Variables (.env)
+You need a .env file containing Firebase and PeerJS configurations for the project to run. Create a .env file in the root directory and fill in the following keys by obtaining them from your own Firebase project:
 ```Bash
 VITE_API_KEY=your_firebase_api_key
 VITE_AUTH_DOMAIN=your_project.firebaseapp.com
@@ -48,22 +46,22 @@ VITE_STORAGE_BUCKET=your_project.appspot.com
 VITE_MESSAGING_SENDER_ID=your_sender_id
 VITE_APP_ID=your_app_id
 ```
-### 4. Geliştirme Modunda Çalıştırma (Dev)
-Web ve Electron'u aynı anda geliştirme modunda açmak için:
+### 4. Running in Development Mode (Dev)
+To open Web and Electron simultaneously in development mode:
 ```Bash
 npm run electron:dev
 ```
-Sadece Web sürümü için:
+For Web version only:
 ```Bash
 npm run dev
 ```
 
-### 📦 Build (Derleme)
-Windows için .exe dosyası oluşturmak istiyorsanız:
+### 📦 Build
+If you want to create an .exe file for Windows:
 ```Bash
 npm run electron:build
 ```
-Çıktı dosyaları release/ klasöründe oluşturulacaktır.
+Output files will be created in the release/ folder.
 
-### 🤝 Katkı
-Bu proje şu anda geliştirme aşamasındadır. Hataları "Issues" sekmesinden bildirebilirsiniz.
+### 🤝 Contribution
+This project is currently in the development stage. You can report bugs via the "Issues" tab.
