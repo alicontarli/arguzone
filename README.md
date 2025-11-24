@@ -32,11 +32,11 @@ Projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyi
 git clone [https://github.com/KULLANICI_ADINIZ/arguzone-beta.git](https://github.com/KULLANICI_ADINIZ/arguzone-beta.git)
 cd arguzone-beta
 ```
-2. Bağımlılıkları Yükleyin
-Bash
-
+### 2. Bağımlılıkları Yükleyin
+```Bash
 npm install
-3. Çevresel Değişkenler (.env)
+```
+### 3. Çevresel Değişkenler (.env)
 Projenin çalışması için Firebase ve PeerJS yapılandırmalarını içeren bir .env dosyasına ihtiyacınız vardır. Ana dizinde .env dosyası oluşturun ve aşağıdaki anahtarları kendi Firebase projenizden alarak doldurun:
 
 Kod snippet'i
@@ -47,11 +47,9 @@ VITE_PROJECT_ID=your_project_id
 VITE_STORAGE_BUCKET=your_project.appspot.com
 VITE_MESSAGING_SENDER_ID=your_sender_id
 VITE_APP_ID=your_app_id
-4. Geliştirme Modunda Çalıştırma (Dev)
+### 4. Geliştirme Modunda Çalıştırma (Dev)
 Web ve Electron'u aynı anda geliştirme modunda açmak için:
-
 ```Bash
-
 npm run electron:dev
 ```
 Sadece Web sürümü için:
@@ -59,12 +57,12 @@ Sadece Web sürümü için:
 npm run dev
 ```
 
-📦 Build (Derleme)
+### 📦 Build (Derleme)
 Windows için .exe dosyası oluşturmak istiyorsanız:
 ```Bash
 npm run electron:build
 ```
 Çıktı dosyaları release/ klasöründe oluşturulacaktır.
 
-🤝 Katkı
+### 🤝 Katkı
 Bu proje şu anda geliştirme aşamasındadır. Hataları "Issues" sekmesinden bildirebilirsiniz.
