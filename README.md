@@ -1,67 +1,156 @@
-# ArguZone (Beta v0.0.1)
+# ArguZone
 
-![Status](https://img.shields.io/badge/Status-Beta-orange) ![Version](https://img.shields.io/badge/Version-v0.0.1-blue) ![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Beta-orange)
+![Version](https://img.shields.io/badge/Version-v0.0.1-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-**ArguZone** is a modern chat application designed for friend groups, providing low-latency voice and text communication. It aims to offer a Discord-like experience by bringing the power of web technologies to the desktop with Electron.
+**ArguZone** is a real-time voice and text chat application built for friend groups. It delivers a Discord-like experience by combining WebRTC peer-to-peer audio with Firebase-powered text chat, packaged as both a web app and a native desktop application via Electron.
 
-## 🚀 Features
+---
 
-* **Real-Time Messaging:** Instant text communication via Firebase Firestore infrastructure.
-* **P2P Voice Chat:** Direct and low-latency voice transmission between users using PeerJS without server costs.
-* **Desktop Integration:**
-    * Native application experience on Windows with Electron.
-    * **Global Mute:** Ability to toggle the microphone with the `Alt + M` shortcut even when the application is in the background.
-* **Cross-Platform:** A structure that can work both in the web browser and as a desktop application.
+## ✨ Features
+
+### 💬 Text Chat
+- Real-time messaging powered by Firebase Firestore
+- Messages persist across sessions and are ordered chronologically
+- Auto-scroll to the latest message
+- 2000-character message limit with a live remaining-characters counter
+- Visible send button (also supports Enter key)
+
+### 🎙️ Voice Chat
+- Peer-to-peer audio via **PeerJS (WebRTC)** — no extra server costs
+- Noise gate with a configurable threshold (filters out background noise between words)
+- Configurable microphone input gain (0–200%)
+- Active speakers list in the sidebar with mute indicators (🔇)
+- Heartbeat system — automatically removes inactive users from the voice channel
+- Graceful cleanup on tab close or app exit
+
+### 🔐 Authentication
+- Email/password login and **registration** (create an account in-app)
+- Auto-generated avatar using [UI Avatars](https://ui-avatars.com)
+- Change display name from the Settings panel
+
+### ⚙️ Settings Panel
+Click the **⚙️** button in the top bar to open Settings.
+
+#### 🎧 Audio Settings
+| Setting | Description |
+|---|---|
+| **Microphone (Input Device)** | Choose from all available audio input devices; selection persists across sessions |
+| **Speaker / Headset (Output Device)** | Choose from all available audio output devices; applied immediately to active calls via `setSinkId` |
+| **Microphone Input Volume** | Boost or reduce your microphone level (0–200%), applied in real-time via Web Audio API |
+| **Output Volume** | Adjust the volume of all incoming voice streams (0–100%), applied in real-time |
+| **Noise Gate Threshold** | Fine-tune the silence threshold (0–50); changes apply instantly without reconnecting |
+| **Echo Cancellation** | Toggle browser-level echo cancellation (applied on next connection) |
+| **Noise Suppression** | Toggle browser-level noise suppression (applied on next connection) |
+
+All settings are persisted to `localStorage` and restored on next launch.
+
+#### 👤 Account Settings
+- View your current avatar, display name, and email
+- Change your display name at any time
+
+### 🖥️ Desktop (Electron)
+- Native Windows application via Electron + NSIS installer
+- **Global hotkey `Alt+M`** — mute/unmute your microphone even when the app is in the background
+- Graceful cleanup on app close (removes you from the voice channel)
+- Menu bar hidden for a cleaner experience
+
+---
 
 ## 🛠️ Tech Stack
 
-This project is developed using the following technologies:
+| Layer | Technology |
+|---|---|
+| UI | [React 18](https://react.dev/) + [Vite](https://vitejs.dev/) |
+| Desktop | [Electron 33](https://www.electronjs.org/) |
+| Backend / Auth | [Firebase](https://firebase.google.com/) (Firestore + Auth) |
+| Voice / P2P | [PeerJS](https://peerjs.com/) (WebRTC wrapper) |
+| Audio Processing | Web Audio API (noise gate, gain nodes) |
+| Build | electron-builder (NSIS for Windows) |
 
-* **Core:** [React](https://react.dev/) + [Vite](https://vitejs.dev/)
-* **Desktop Framework:** [Electron](https://www.electronjs.org/)
-* **Backend & Database:** [Firebase](https://firebase.google.com/) (Auth & Firestore)
-* **Voice / P2P:** [PeerJS](https://peerjs.com/) (WebRTC Wrapper)
-* **Build Tool:** Electron Builder
+---
 
-## ⚙️ Installation and Setup
+## ⚙️ Installation & Setup
 
-Follow the steps below to run the project in your local environment:
-
-### 1. Clone the Repository
+### 1. Clone the repository
 ```bash
-git clone [https://github.com/YOUR_USERNAME/arguzone-beta.git](https://github.com/YOUR_USERNAME/arguzone-beta.git)
-cd arguzone-beta
+git clone https://github.com/alicontarli/arguzone.git
+cd arguzone
 ```
-### 2. Install Dependencies
-```Bash
+
+### 2. Install dependencies
+```bash
 npm install
 ```
-### 3. Environment Variables (.env)
-You need a .env file containing Firebase and PeerJS configurations for the project to run. Create a .env file in the root directory and fill in the following keys by obtaining them from your own Firebase project:
-```Bash
-VITE_API_KEY=your_firebase_api_key
-VITE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_PROJECT_ID=your_project_id
-VITE_STORAGE_BUCKET=your_project.appspot.com
-VITE_MESSAGING_SENDER_ID=your_sender_id
-VITE_APP_ID=your_app_id
+
+### 3. Configure environment variables
+Create a `.env` file in the root directory with your Firebase project credentials:
+```env
+VITE_apiKey=your_firebase_api_key
+VITE_authDomain=your_project.firebaseapp.com
+VITE_projectId=your_project_id
+VITE_storageBucket=your_project.appspot.com
+VITE_messagingSenderId=your_sender_id
+VITE_appId=your_app_id
+VITE_measurementId=your_measurement_id
 ```
-### 4. Running in Development Mode (Dev)
-To open Web and Electron simultaneously in development mode:
-```Bash
-npm run electron:dev
-```
-For Web version only:
-```Bash
+> Obtain these values from the [Firebase Console](https://console.firebase.google.com/) → Project Settings → Your apps.
+
+### 4. Firebase setup
+Enable the following in the Firebase Console:
+- **Authentication** → Email/Password sign-in method
+- **Firestore Database** → create a database, use the following collections:
+  - `chat` — text messages
+  - `voice_active` — active voice participants
+
+### 5. Run in development mode
+
+Web only:
+```bash
 npm run dev
 ```
 
-### 📦 Build
-If you want to create an .exe file for Windows:
-```Bash
+Web + Electron simultaneously:
+```bash
+npm run electron:dev
+```
+
+### 6. Build
+
+Web build:
+```bash
+npm run build
+```
+
+Windows installer (`.exe`):
+```bash
 npm run electron:build
 ```
-Output files will be created in the release/ folder.
+Output is placed in the `release/` folder.
 
-### 🤝 Contribution
-This project is currently in the development stage. You can report bugs via the "Issues" tab.
+---
+
+## 🗂️ Project Structure
+
+```
+arguzone/
+├── electron/
+│   ├── main.cjs        # Electron main process (window, global shortcuts)
+│   └── preload.cjs     # Context bridge (IPC → React)
+├── src/
+│   ├── App.jsx         # Main React component (all UI & logic)
+│   ├── firebase.js     # Firebase initialization & Firestore export
+│   ├── main.jsx        # React entry point
+│   └── index.css       # Global styles
+├── public/
+├── index.html
+├── vite.config.js
+└── package.json
+```
+
+---
+
+## 🤝 Contributing
+
+This project is in active development. Bug reports and feature requests are welcome via the [Issues](https://github.com/alicontarli/arguzone/issues) tab.
