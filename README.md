@@ -1,8 +1,6 @@
 # ArguZone
 
 ![Status](https://img.shields.io/badge/Status-Beta-orange)
-![Version](https://img.shields.io/badge/Version-v0.0.1-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 **ArguZone** is a real-time voice and text chat application built for friend groups. It delivers a Discord-like experience by combining WebRTC peer-to-peer audio with Firebase-powered text chat, packaged as both a web app and a native desktop application via Electron.
 
