@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 // DİKKAT: firebase.js dosyanın src klasöründe olduğunu varsayıyorum
 import { db } from './firebase'; 
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 import Peer from 'peerjs';
 
@@ -25,8 +25,12 @@ function App() {
   const [sifre, setSifre] = useState("");
   const [hata, setHata] = useState("");
   
+  const [kayitModu, setKayitModu] = useState(false);
+  const [displayNameInput, setDisplayNameInput] = useState("");
+
   const [mesajlar, setMesajlar] = useState([]);
   const [yeniMesaj, setYeniMesaj] = useState("");
+  const MESAJ_MAX_UZUNLUK = 2000;
   
   const [sesliSohbetteMi, setSesliSohbetteMi] = useState(false);
   const [mikrofonKapali, setMikrofonKapali] = useState(false);
@@ -34,6 +38,7 @@ function App() {
   const [isConnecting, setIsConnecting] = useState(false);
 
   // --- REFS ---
+  const chatKutuRef = useRef(null);
   const peerRef = useRef(null);
   const localStreamRef = useRef(null); // Ham mikrofon
   const processedStreamRef = useRef(null); // İşlenmiş (Filtreli) ses
@@ -55,8 +60,7 @@ function App() {
     const qChat = query(collection(db, "chat"), orderBy("createdAt", "asc"));
     const unsubscribeChat = onSnapshot(qChat, (snapshot) => {
       setMesajlar(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      const chatKutu = document.getElementById("chat-kutu");
-      if(chatKutu) chatKutu.scrollTop = chatKutu.scrollHeight;
+      if (chatKutuRef.current) chatKutuRef.current.scrollTop = chatKutuRef.current.scrollHeight;
     });
 
     const qVoice = query(collection(db, "voice_active"));
@@ -288,7 +292,22 @@ function App() {
       const userCredential = await signInWithEmailAndPassword(auth, email, sifre);
       if (!userCredential.user.displayName) { await updateProfile(userCredential.user, { displayName: email.split('@')[0], photoURL: `https://ui-avatars.com/api/?name=${email.split('@')[0]}&background=random` }); }
       setHata("");
-    } catch (error) { setHata("Giriş başarısız."); }
+    } catch (error) { setHata("Giriş başarısız. E-posta veya şifre hatalı."); }
+  };
+
+  const kayitOl = async (e) => {
+    e.preventDefault();
+    if (!displayNameInput.trim()) { setHata("Kullanıcı adı boş olamaz."); return; }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, sifre);
+      const name = displayNameInput.trim();
+      await updateProfile(userCredential.user, { displayName: name, photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random` });
+      setHata("");
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') { setHata("Bu e-posta adresi zaten kullanılıyor."); }
+      else if (error.code === 'auth/weak-password') { setHata("Şifre en az 6 karakter olmalıdır."); }
+      else { setHata("Kayıt başarısız. Lütfen tekrar deneyin."); }
+    }
   };
 
   const mesajGonder = async (e) => {
@@ -298,7 +317,7 @@ function App() {
     setYeniMesaj("");
   };
 
-  if (!kullanici) { return ( <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", background: "#2f3136" }}> <StilYama /> <div style={{ background: "#36393f", padding: "40px", borderRadius: "8px", boxShadow: "0 2px 10px rgba(0,0,0,0.2)", width: "350px" }}> <h2 style={{ textAlign: "center", color: "#fff", marginBottom: "20px" }}>ArguZone Giriş</h2> <form onSubmit={girisYap} style={{ display: "flex", flexDirection: "column", gap: "15px" }}> <input type="email" placeholder="E-posta" value={email} onChange={e => setEmail(e.target.value)} style={{ padding: "10px", background: "#202225", border: "1px solid #202225", color: "white", borderRadius: "4px" }} required /> <input type="password" placeholder="Şifre" value={sifre} onChange={e => setSifre(e.target.value)} style={{ padding: "10px", background: "#202225", border: "1px solid #202225", color: "white", borderRadius: "4px" }} required /> <button type="submit" style={{ padding: "12px", background: "#5865f2", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>Giriş Yap</button> </form> {hata && <p style={{ color: "#ed4245", marginTop: "10px", fontSize: "14px", textAlign: "center" }}>{hata}</p>} </div> </div> ); }
+  if (!kullanici) { return ( <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", background: "#2f3136" }}> <StilYama /> <div style={{ background: "#36393f", padding: "40px", borderRadius: "8px", boxShadow: "0 2px 10px rgba(0,0,0,0.2)", width: "350px" }}> <h2 style={{ textAlign: "center", color: "#fff", marginBottom: "20px" }}>{kayitModu ? "ArguZone Kayıt" : "ArguZone Giriş"}</h2> <form onSubmit={kayitModu ? kayitOl : girisYap} style={{ display: "flex", flexDirection: "column", gap: "15px" }}> {kayitModu && ( <input type="text" placeholder="Kullanıcı Adı" value={displayNameInput} onChange={e => setDisplayNameInput(e.target.value)} style={{ padding: "10px", background: "#202225", border: "1px solid #202225", color: "white", borderRadius: "4px" }} required /> )} <input type="email" placeholder="E-posta" value={email} onChange={e => setEmail(e.target.value)} style={{ padding: "10px", background: "#202225", border: "1px solid #202225", color: "white", borderRadius: "4px" }} required /> <input type="password" placeholder="Şifre" value={sifre} onChange={e => setSifre(e.target.value)} style={{ padding: "10px", background: "#202225", border: "1px solid #202225", color: "white", borderRadius: "4px" }} required /> <button type="submit" style={{ padding: "12px", background: "#5865f2", color: "white", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>{kayitModu ? "Kayıt Ol" : "Giriş Yap"}</button> </form> {hata && <p style={{ color: "#ed4245", marginTop: "10px", fontSize: "14px", textAlign: "center" }}>{hata}</p>} <p style={{ textAlign: "center", marginTop: "15px", fontSize: "13px", color: "#b9bbbe" }}>{kayitModu ? "Zaten hesabın var mı?" : "Hesabın yok mu?"} <span onClick={() => { setKayitModu(!kayitModu); setHata(""); }} style={{ color: "#5865f2", cursor: "pointer", fontWeight: "bold" }}>{kayitModu ? " Giriş Yap" : " Kayıt Ol"}</span></p> </div> </div> ); }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh", fontFamily: "Arial, sans-serif" }}>
@@ -358,7 +377,7 @@ function App() {
 
         {/* Sağ Panel: Chat */}
         <div style={{ flex: 1, background: "#36393f", display: "flex", flexDirection: "column" }}>
-            <div id="chat-kutu" style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+            <div ref={chatKutuRef} style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
                 {mesajlar.map(m => (
                     <div key={m.id} style={{ display: "flex", gap: "15px", marginBottom: "20px" }}>
                         <img src={m.photo} style={{ width: "40px", height: "40px", borderRadius: "50%", marginTop: "5px" }} alt="avatar" />
@@ -373,8 +392,14 @@ function App() {
                 ))}
             </div>
             <div style={{ padding: "0 20px 20px 20px" }}>
-                <form onSubmit={mesajGonder} style={{ background: "#40444b", borderRadius: "8px", padding: "0 15px" }}>
-                    <input value={yeniMesaj} onChange={(e) => setYeniMesaj(e.target.value)} placeholder={`#genel-sohbet kanalına mesaj gönder`} style={{ width: "100%", background: "transparent", border: "none", padding: "15px 0", color: "white", outline: "none" }} />
+                <form onSubmit={mesajGonder} style={{ background: "#40444b", borderRadius: "8px", padding: "0 15px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <input value={yeniMesaj} onChange={(e) => setYeniMesaj(e.target.value.slice(0, MESAJ_MAX_UZUNLUK))} placeholder={`#genel-sohbet kanalına mesaj gönder`} style={{ flex: 1, background: "transparent", border: "none", padding: "15px 0", color: "white", outline: "none" }} />
+                    {yeniMesaj.length > MESAJ_MAX_UZUNLUK * 0.8 && (
+                        <span style={{ fontSize: "12px", color: yeniMesaj.length >= MESAJ_MAX_UZUNLUK ? "#ed4245" : "#faa61a", whiteSpace: "nowrap" }}>
+                            {MESAJ_MAX_UZUNLUK - yeniMesaj.length}
+                        </span>
+                    )}
+                    <button type="submit" disabled={yeniMesaj.trim() === ""} style={{ background: "transparent", border: "none", cursor: yeniMesaj.trim() ? "pointer" : "default", padding: "0", fontSize: "20px", color: yeniMesaj.trim() ? "#5865f2" : "#4f545c", lineHeight: 1 }}>➤</button>
                 </form>
             </div>
         </div>
